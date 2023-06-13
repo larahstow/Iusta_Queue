@@ -1,0 +1,14 @@
+{
+  "name": "iusta_queue",
+  "version": "1.0.0",
+  "description": "Implements an asynchronous task queue of worker (threads)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ellara Harrison-Stow",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.4"
+  }
+}
