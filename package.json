@@ -1,6 +1,6 @@
 {
   "name": "iusta_queue",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Implements an asynchronous task queue of worker (threads)",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,6 @@
   "dependencies": {
     "async": "^3.2.4",
     "moleculer": "^0.14.29",
-    "moleculer-repl": "^0.7.3",
     "mqtt": "^4.3.7"
   }
 }

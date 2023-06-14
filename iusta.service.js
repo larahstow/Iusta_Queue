@@ -8,18 +8,35 @@ const randomWait = async (ctx) => {
 
 module.exports = {
   name: "queue_service",
-  settings: {},
-  transporter: "mqtt://mqtt-server:1883",
+  settings: {
+    nodeID: `node-${Math.floor(Math.random() * (999 - 100 + 1) + 100)}`,
+  },
+  transporter: "MQTT",
   actions: {
     slow_task(ctx) {
+      this.logger.info(
+        `${this.settings.nodeID} executing ${ctx.params.taskId}`
+      );
       return randomWait(ctx);
+    },
+    blocking_task(ctx) {
+      this.logger.info(
+        `${this.settings.nodeID} executing ${ctx.params.taskId}`
+      );
+      const ms = ctx.params.ms;
+      const taskId = ctx.params.taskId;
+      const duration = Math.random() * ms * taskId;
+
+      var waitTill = new Date(new Date().getTime() + duration);
+      while (waitTill > new Date()) {}
+      return `${taskId} waited for ${duration} ms`;
     },
   },
   async stopped() {
     try {
-      await new Promise((resolve) =>
+      await new Promise(resolve =>
         this.settings.server.close(() => {
-          resolve();
+          resolve;
         })
       );
     } catch (e) {

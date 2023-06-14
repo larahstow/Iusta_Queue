@@ -1,7 +1,10 @@
+//you can run this by calling 
+// $node Iusta_broker.js 
+
 const { ServiceBroker } = require("moleculer");
 const mqtt = require("mqtt");
 
-const concurrency = 1;
+const concurrency = 10;
 let brokers = [];
 
 randomWait = async (ctx) => {
@@ -12,6 +15,8 @@ randomWait = async (ctx) => {
   return `${taskId} waited for ${duration} ms`;
 };
 
+
+//Make and return a broker
 const makeBrokerAsync = (index) => {
   let broker = new ServiceBroker();
 
@@ -33,6 +38,7 @@ const makeBrokerAsync = (index) => {
   });
 };
 
+//Make a bunch of workers by launching brokers
 async function makeWorkers(concurrency) {
   for (let i = 0; i < concurrency; i++) {
     brokers.push(await makeBrokerAsync(i));
@@ -54,11 +60,12 @@ const main = async () => {
   console.log(`idle brokers registered: x${idleBrokers.length}`);
 
   //Make a bunch of tasks
-  for (let i = 0; i < 10; i++) {
-    //if ms is too high and too many tasks*ms can hit timeouts...
+  for (let i = 0; i < 100; i++) {
+    //if ms is too high and too many tasks, tasks*ms could hit timeouts...
     Queue.push({ taskId: i, ms: 150 });
   }
 
+  //assign task function for an idle broker
   const assignTask = (Queue, idleBrokers) => {
     if (idleBrokers.length > 0 && Queue.length > 0) {
       //assign task to first broker, removing it from the idle array
@@ -71,7 +78,9 @@ const main = async () => {
         .call("queue_service.slow_task", activeJob)
         .then((res) => {
           console.log(`${res}`);
+          //put the finished broker back in the idle queue
           idleBrokers.push(focusBroker);
+          //assign task again
           assignTask(Queue, idleBrokers);
         })
         .catch((err) => {
@@ -83,36 +92,11 @@ const main = async () => {
     }
   };
 
+  //assign tasks to all the brokers
   for (let i = 0; i < brokers.length; i++) {
     assignTask(Queue, idleBrokers);
   }
 };
 
 
-const protocol = "mqtt";
-const host = "broker.emqx.io";
-const port = "1883";
-const clientId = `mqtt_main`;
-const connectUrl = `${protocol}://${host}:${port}`;
-
-const client = mqtt.connect(connectUrl, {
-  clientId,
-  clean: true,
-  connectTimeout: 4000,
-  username: "emqx",
-  password: "public",
-  reconnectPeriod: 1000,
-});
-
-console.log('testing MQTT connection:')
-client.on("connect", () => {
-  console.log("Connected");
-  client.end(false, {}, () => {
-    console.log("client disconnected");
-    main()
-  });
-  
-});
-
-
-// main();
+main()
