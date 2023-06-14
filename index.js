@@ -99,6 +99,6 @@ async function additionalPlus(ms = 1000) {
   console.log("All done!");
 }
 
-await main(150);
-await additional(150);
-await additionalPlus(150);
+main(150);
+additional(150);
+additionalPlus(150);
