@@ -1,6 +1,6 @@
 # Iusta_Queue
 
-$ Git clone
+$ Git clone ...
 
 $ cd Iusta_Queue 
 
