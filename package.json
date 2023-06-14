@@ -9,6 +9,9 @@
   "author": "Ellara Harrison-Stow",
   "license": "ISC",
   "dependencies": {
-    "async": "^3.2.4"
+    "async": "^3.2.4",
+    "moleculer": "^0.14.29",
+    "moleculer-repl": "^0.7.3",
+    "mqtt": "^4.3.7"
   }
 }
